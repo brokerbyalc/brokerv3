@@ -1010,25 +1010,25 @@ Best regards, [Your Name] | [Phone/WhatsApp]</div></div>
   <!-- Sélection ou création deal -->
   <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
     <button class="btn btn-p" onclick="newWizardDeal()">🆕 Nouveau deal guidé</button>
-    <select class="fi" id="wiz-select-deal" style="flex:1;max-width:300px;" onchange="loadWizardDeal(this.value)">
+    <select class="fi" id="wiz-select" style="flex:1;max-width:300px;" onchange="loadWizardDeal(this.value)">
       <option value="">Continuer un deal existant...</option>
     </select>
   </div>
 
-  <div id="wizard-container" style="display:none;">
+  <div id="wiz-container" style="display:none;">
     <div style="background:var(--s1);border:1px solid var(--b1);border-radius:9px;padding:14px;margin-bottom:16px;">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
         <div>
-          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:700;font-size:16px;" id="wiz-deal-name">—</div>
-          <div style="font-size:11px;color:var(--t3);margin-top:2px;" id="wiz-deal-sub">—</div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:700;font-size:16px;" id="wiz-name">—</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:2px;" id="wiz-sub">—</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
           <div style="font-size:11px;color:var(--t3);">Progression</div>
-          <div style="font-family:'Courier New',Courier,monospace;font-size:14px;font-weight:600;color:var(--ac);" id="wiz-progress-txt">0%</div>
+          <div style="font-family:'Courier New',Courier,monospace;font-size:14px;font-weight:600;color:var(--ac);" id="wiz-pct">0%</div>
         </div>
       </div>
       <div style="height:6px;background:var(--s3);border-radius:3px;margin-top:10px;overflow:hidden;">
-        <div id="wiz-progress-bar" style="height:100%;background:var(--ac);border-radius:3px;width:0%;transition:width .4s;"></div>
+        <div id="wiz-bar" style="height:100%;background:var(--ac);border-radius:3px;width:0%;transition:width .4s;"></div>
       </div>
     </div>
 
@@ -1746,6 +1746,9 @@ Best regards, [Your Name] | [Phone/WhatsApp]</div></div>
 <script>
 
 
+
+
+
 // ===== STORAGE LOCAL - SIMPLE ET FIABLE =====
 const DB = {
   _uid: 'broker',
@@ -1863,22 +1866,25 @@ function startApp(user) {
 // ===== UI =====
 const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 function updateUI() {
-  const prof = DB.getObj('profile', {});
-  const nm = prof.name || 'Utilisateur';
-  const session = JSON.parse(localStorage.getItem('bk_session') || 'null');
-  document.getElementById('sb-un').textContent = nm + (session ? ' · 🔒 Connecté' : ' · Mode local');
-  document.getElementById('prof-name').textContent = nm;
-  document.getElementById('prof-soc').textContent = prof.soc || '';
-  const av = document.getElementById('prof-av');
-  const mav = document.getElementById('mob-av');
+  var prof = DB.getObj('profile', {});
+  var nm = prof.name || 'Utilisateur';
+  var session = null;
+  try { session = JSON.parse(localStorage.getItem('bk_session') || 'null'); } catch(e){}
+  var el;
+  el = document.getElementById('sb-un'); if(el) el.textContent = nm + (session ? ' · 🔒 Connecté' : ' · Mode local');
+  el = document.getElementById('prof-name'); if(el) el.textContent = nm;
+  el = document.getElementById('prof-soc'); if(el) el.textContent = prof.soc || '';
+  var av = document.getElementById('prof-av');
+  var mav = document.getElementById('mob-av');
   if (prof.photo) {
-    av.innerHTML = `<img src="${prof.photo}">`;
-    if (mav) mav.innerHTML = `<img src="${prof.photo}">`;
+    if(av) av.innerHTML = '<img src="' + prof.photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+    if(mav) mav.innerHTML = '<img src="' + prof.photo + '">';
   } else {
-    av.textContent = nm.charAt(0).toUpperCase();
-    if (mav) mav.textContent = nm.charAt(0).toUpperCase();
+    if(av) av.textContent = nm.charAt(0).toUpperCase();
+    if(mav) mav.textContent = nm.charAt(0).toUpperCase();
   }
 }
+
 
 // ===== NAV =====
 function nav(id, el) {
@@ -2822,6 +2828,9 @@ window.addEventListener('DOMContentLoaded', () => {
     console.error('Init error:', e);
   }
 });
+
+
+
 
 
 </script>
